@@ -1,8 +1,8 @@
 // Socket.io Server Configuration
 module.exports = {
   port: process.env.PORT || 3001,
-  corsOrigin: process.env.CORS_ORIGIN || 'http://localhost:3000',
-  laravelApiUrl: process.env.LARAVEL_API_URL || 'http://localhost/brainershub/api',
+  corsOrigin: 'https://brainershub.in',
+  laravelApiUrl: 'https://admin.brainershub.in/api',
   nodeEnv: process.env.NODE_ENV || 'development',
   
   // Socket.io options
