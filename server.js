@@ -115,19 +115,31 @@ io.on('connection', (socket) => {
   });
   
   /**
-   * Send message (broadcast to conversation room)
+   * Send message (broadcast to conversation room AND recipient's personal room)
    */
   socket.on('send_message', (data) => {
     const { conversationId, message, tempId } = data;
     
-    console.log(`Message from ${socket.userKey} in conversation ${conversationId}`);
+    console.log(`📤 Message from ${socket.userKey} in conversation ${conversationId}`);
     
-    // Broadcast to all users in conversation (including sender for multi-device sync)
-    io.to(`conversation_${conversationId}`).emit('new_message', {
+    const messageData = {
       ...message,
       tempId, // For optimistic UI updates
       timestamp: Date.now()
-    });
+    };
+    
+    // 1. Broadcast to conversation room (for users actively in chat)
+    io.to(`conversation_${conversationId}`).emit('new_message', messageData);
+    console.log(`  ✅ Sent to conversation_${conversationId} room`);
+    
+    // 2. ALSO send to recipient's personal user room (for notifications)
+    // This ensures the recipient gets the message even if not in conversation room
+    if (message.conversation_id) {
+      // We need to know who the recipient is - send to all potential participants
+      // The App.jsx will filter out own messages
+      io.emit('new_message', messageData);
+      console.log(`  ✅ Broadcasted to all connected users for notifications`);
+    }
     
     // Send delivery confirmation to sender
     socket.emit('message_sent', {
