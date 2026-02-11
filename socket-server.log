@@ -1,0 +1,271 @@
+
+> brainershub-socket-server@1.0.0 start
+> node server.js
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🚀 Brainers Hub Socket.io Server
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✅ Server running on port 3001
+✅ Environment: development
+✅ CORS Origin: https://brainershub.in,https://www.brainershub.in,http://localhost:3000,http://localhost:3002
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📊 Health check: http://localhost:3001/health
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✅ User connected: student_147162 (WdivrmgIwWZate99AAAB)
+  📍 Joined room: user_student_147162
+✅ User connected: student_147161 (iP1D9qqQC40-k4-1AAAD)
+  📍 Joined room: user_student_147161
+✅ User connected: student_147162 (y51GRKL3GDXgiBf-AAAF)
+  📍 Joined room: user_student_147162
+✅ User connected: student_147162 (S4YfUmEpGEqyWkt8AAAH)
+  📍 Joined room: user_student_147162
+❌ User disconnected: student_147162 (WdivrmgIwWZate99AAAB)
+student_147161 left conversation 3
+❌ User disconnected: student_147161 (iP1D9qqQC40-k4-1AAAD)
+✅ User connected: student_147162 (dDMZJckMuFRfVQFvAAAJ)
+  📍 Joined room: user_student_147162
+❌ User disconnected: student_147162 (y51GRKL3GDXgiBf-AAAF)
+❌ User disconnected: student_147162 (S4YfUmEpGEqyWkt8AAAH)
+✅ User connected: student_147161 (2F8exB_j1XPFCX8wAAAL)
+  📍 Joined room: user_student_147161
+✅ User connected: student_147162 (ngiziGCLDjPBCOHiAAAN)
+  📍 Joined room: user_student_147162
+✅ User connected: student_147162 (W3X0Os6piJ9iNB0aAAAP)
+  📍 Joined room: user_student_147162
+📴 Call 15 ended by undefined_147162
+📴 Call 15 ended by student_147162
+❌ User disconnected: student_147162 (dDMZJckMuFRfVQFvAAAJ)
+✅ User connected: student_147162 (n3TmBMrng1amhS5oAAAR)
+  📍 Joined room: user_student_147162
+student_147162 joined conversation 3
+student_147162 left conversation 3
+student_147162 joined conversation 3
+📴 Call 15 ended by undefined_147161
+📴 Call 15 ended by student_147161
+❌ User disconnected: student_147161 (2F8exB_j1XPFCX8wAAAL)
+✅ User connected: student_147161 (WhF2Udyek1OWWdxeAAAT)
+  📍 Joined room: user_student_147161
+student_147161 joined conversation 3
+student_147161 left conversation 3
+student_147161 joined conversation 3
+📞 Call initiated from student_147161 to student_147162 { callId: 16, callType: 'video' }
+  📍 Target room: user_student_147162, Sockets in room: 3
+  👥 Sockets in user_student_147162: [
+  'ngiziGCLDjPBCOHiAAAN',
+  'W3X0Os6piJ9iNB0aAAAP',
+  'n3TmBMrng1amhS5oAAAR'
+]
+  ✅ Sent incoming_call to user_student_147162
+  📤 Sent to socket: ngiziGCLDjPBCOHiAAAN
+  📤 Sent to socket: W3X0Os6piJ9iNB0aAAAP
+  📤 Sent to socket: n3TmBMrng1amhS5oAAAR
+🔄 WebRTC signal for call 16 to student_147162
+  📤 Sent WebRTC signal to 3 socket(s)
+🔄 WebRTC signal for call 16 to student_147162
+  📤 Sent WebRTC signal to 3 socket(s)
+✅ Call 16 accepted by student_147162
+❌ User disconnected: student_147161 (WhF2Udyek1OWWdxeAAAT)
+❌ User disconnected: student_147162 (n3TmBMrng1amhS5oAAAR)
+📊 Active connections: 2, Online users: 1
+📊 Active connections: 2, Online users: 1
+📊 Active connections: 2, Online users: 1
+📊 Active connections: 2, Online users: 1
+📊 Active connections: 2, Online users: 1
+📊 Active connections: 2, Online users: 1
+📊 Active connections: 2, Online users: 1
+📊 Active connections: 2, Online users: 1
+📊 Active connections: 2, Online users: 1
+📊 Active connections: 2, Online users: 1
+📊 Active connections: 2, Online users: 1
+📊 Active connections: 2, Online users: 1
+📊 Active connections: 2, Online users: 1
+📊 Active connections: 2, Online users: 1
+📊 Active connections: 2, Online users: 1
+📊 Active connections: 2, Online users: 1
+❌ User disconnected: student_147162 (W3X0Os6piJ9iNB0aAAAP)
+❌ User disconnected: student_147162 (ngiziGCLDjPBCOHiAAAN)
+✅ User connected: student_147162 (41cNTbadBGXPyjqHAAAV)
+  📍 Joined room: user_student_147162
+✅ User connected: student_147162 (XkQHfaWdJljva-bcAAAX)
+  📍 Joined room: user_student_147162
+📊 Active connections: 2, Online users: 1
+📊 Active connections: 2, Online users: 1
+📊 Active connections: 2, Online users: 1
+📊 Active connections: 2, Online users: 1
+📊 Active connections: 2, Online users: 1
+📊 Active connections: 2, Online users: 1
+📊 Active connections: 2, Online users: 1
+📊 Active connections: 2, Online users: 1
+📊 Active connections: 2, Online users: 1
+📊 Active connections: 2, Online users: 1
+📊 Active connections: 2, Online users: 1
+📊 Active connections: 2, Online users: 1
+📊 Active connections: 2, Online users: 1
+📊 Active connections: 2, Online users: 1
+📊 Active connections: 2, Online users: 1
+📊 Active connections: 2, Online users: 1
+📊 Active connections: 2, Online users: 1
+📊 Active connections: 2, Online users: 1
+📊 Active connections: 2, Online users: 1
+📊 Active connections: 2, Online users: 1
+📊 Active connections: 2, Online users: 1
+📊 Active connections: 2, Online users: 1
+📊 Active connections: 2, Online users: 1
+📊 Active connections: 2, Online users: 1
+📊 Active connections: 2, Online users: 1
+📊 Active connections: 2, Online users: 1
+📊 Active connections: 2, Online users: 1
+📊 Active connections: 2, Online users: 1
+📊 Active connections: 2, Online users: 1
+📊 Active connections: 2, Online users: 1
+📊 Active connections: 2, Online users: 1
+📊 Active connections: 2, Online users: 1
+📊 Active connections: 2, Online users: 1
+📊 Active connections: 2, Online users: 1
+📊 Active connections: 2, Online users: 1
+📊 Active connections: 2, Online users: 1
+📊 Active connections: 2, Online users: 1
+📊 Active connections: 2, Online users: 1
+📊 Active connections: 2, Online users: 1
+📊 Active connections: 2, Online users: 1
+📊 Active connections: 2, Online users: 1
+❌ User disconnected: student_147162 (41cNTbadBGXPyjqHAAAV)
+❌ User disconnected: student_147162 (XkQHfaWdJljva-bcAAAX)
+✅ User connected: student_147161 (F0IU3eUp7SOQQc_HAAAZ)
+  📍 Joined room: user_student_147161
+✅ User connected: student_147162 (ZQIBIS242IV9eHsDAAAb)
+  📍 Joined room: user_student_147162
+✅ User connected: student_147162 (M93CyNjocPh8zev1AAAd)
+  📍 Joined room: user_student_147162
+✅ User connected: student_147162 (cqx7vJ5n_L9OvsD4AAAf)
+  📍 Joined room: user_student_147162
+student_147162 joined conversation 3
+student_147162 left conversation 3
+student_147162 joined conversation 3
+❌ User disconnected: student_147162 (ZQIBIS242IV9eHsDAAAb)
+✅ User connected: student_147162 (2Cw7s3jI4aKdLpPzAAAh)
+  📍 Joined room: user_student_147162
+student_147161 joined conversation 3
+student_147161 left conversation 3
+student_147161 joined conversation 3
+student_147162 joined conversation 3
+student_147162 left conversation 3
+student_147162 joined conversation 3
+❌ User disconnected: student_147161 (F0IU3eUp7SOQQc_HAAAZ)
+✅ User connected: student_147161 (NdNOVPpBEbxHYhXXAAAj)
+  📍 Joined room: user_student_147161
+student_147161 joined conversation 3
+student_147161 left conversation 3
+student_147161 joined conversation 3
+📞 Call initiated from student_147162 to student_147161 { callId: 17, callType: 'voice' }
+  📍 Target room: user_student_147161, Sockets in room: 1
+  👥 Sockets in user_student_147161: [ 'NdNOVPpBEbxHYhXXAAAj' ]
+  ✅ Sent incoming_call to user_student_147161
+  📤 Sent to socket: NdNOVPpBEbxHYhXXAAAj
+❌ User disconnected: student_147162 (2Cw7s3jI4aKdLpPzAAAh)
+✅ Call 17 accepted by student_147161
+❌ User disconnected: student_147161 (NdNOVPpBEbxHYhXXAAAj)
+📊 Active connections: 2, Online users: 1
+📊 Active connections: 2, Online users: 1
+❌ User disconnected: student_147162 (cqx7vJ5n_L9OvsD4AAAf)
+❌ User disconnected: student_147162 (M93CyNjocPh8zev1AAAd)
+✅ User connected: student_147161 (GymJSJewyup1IHvaAAAl)
+  📍 Joined room: user_student_147161
+✅ User connected: student_147162 (zwuWcq8ioNC_1dRYAAAn)
+  📍 Joined room: user_student_147162
+✅ User connected: student_147162 (PXhFJ6FFiEVonJYSAAAp)
+  📍 Joined room: user_student_147162
+✅ User connected: student_147162 (mRdGABvpktn1cUs1AAAr)
+  📍 Joined room: user_student_147162
+❌ User disconnected: student_147162 (zwuWcq8ioNC_1dRYAAAn)
+✅ User connected: student_147162 (log08Odc6D6rJZgYAAAt)
+  📍 Joined room: user_student_147162
+❌ User disconnected: student_147161 (GymJSJewyup1IHvaAAAl)
+✅ User connected: student_147161 (3jdXS10r9CRvci1QAAAv)
+  📍 Joined room: user_student_147161
+student_147162 joined conversation 3
+student_147162 left conversation 3
+student_147162 joined conversation 3
+📞 Call initiated from student_147162 to student_147161 { callId: 18, callType: 'voice' }
+  📍 Target room: user_student_147161, Sockets in room: 1
+  👥 Sockets in user_student_147161: [ '3jdXS10r9CRvci1QAAAv' ]
+  ✅ Sent incoming_call to user_student_147161
+  📤 Sent to socket: 3jdXS10r9CRvci1QAAAv
+✅ Call 18 accepted by student_147161
+🔄 WebRTC signal for call [object Object] to undefined_undefined
+📊 Active connections: 4, Online users: 2
+📊 Active connections: 4, Online users: 2
+📴 Call 18 ended by undefined_147161
+📴 Call 18 ended by student_147162
+📴 Call 18 ended by student_147161
+📴 Call 18 ended by student_147161
+❌ User disconnected: student_147162 (log08Odc6D6rJZgYAAAt)
+✅ User connected: student_147162 (M9LfKBDU3yXmo4keAAAx)
+  📍 Joined room: user_student_147162
+student_147162 joined conversation 3
+student_147162 left conversation 3
+student_147162 joined conversation 3
+📞 Call initiated from student_147162 to student_147161 { callId: 19, callType: 'voice' }
+  📍 Target room: user_student_147161, Sockets in room: 1
+  👥 Sockets in user_student_147161: [ '3jdXS10r9CRvci1QAAAv' ]
+  ✅ Sent incoming_call to user_student_147161
+  📤 Sent to socket: 3jdXS10r9CRvci1QAAAv
+🔄 WebRTC signal for call [object Object] to undefined_undefined
+🔄 WebRTC signal for call [object Object] to undefined_undefined
+✅ Call 19 accepted by student_147161
+📴 Call 19 ended by undefined_147161
+📴 Call 19 ended by student_147162
+📴 Call 19 ended by student_147161
+📴 Call 19 ended by student_147161
+❌ User disconnected: student_147162 (M9LfKBDU3yXmo4keAAAx)
+✅ User connected: student_147162 (SmJtaQF_VWsslvdzAAAz)
+  📍 Joined room: user_student_147162
+student_147162 joined conversation 3
+student_147162 left conversation 3
+student_147162 joined conversation 3
+📞 Call initiated from student_147162 to student_147161 { callId: 20, callType: 'video' }
+  📍 Target room: user_student_147161, Sockets in room: 1
+  👥 Sockets in user_student_147161: [ '3jdXS10r9CRvci1QAAAv' ]
+  ✅ Sent incoming_call to user_student_147161
+  📤 Sent to socket: 3jdXS10r9CRvci1QAAAv
+✅ Call 20 accepted by student_147161
+🔄 WebRTC signal for call [object Object] to undefined_undefined
+📴 Call 20 ended by undefined_147161
+📴 Call 20 ended by student_147162
+📴 Call 20 ended by student_147161
+📴 Call 20 ended by student_147161
+student_147161 joined conversation 3
+student_147161 left conversation 3
+student_147161 joined conversation 3
+✅ User connected: student_147162 (DTZhk_8YCf1ZlSM-AAA1)
+  📍 Joined room: user_student_147162
+student_147162 joined conversation 3
+student_147162 left conversation 3
+student_147162 joined conversation 3
+📊 Active connections: 5, Online users: 2
+❌ User disconnected: student_147162 (SmJtaQF_VWsslvdzAAAz)
+✅ User connected: student_147162 (2dBmlG0dfoTMjWm-AAA3)
+  📍 Joined room: user_student_147162
+student_147162 joined conversation 3
+student_147162 left conversation 3
+student_147162 joined conversation 3
+📞 Call initiated from student_147162 to student_147161 { callId: 21, callType: 'voice' }
+  📍 Target room: user_student_147161, Sockets in room: 1
+  👥 Sockets in user_student_147161: [ '3jdXS10r9CRvci1QAAAv' ]
+  ✅ Sent incoming_call to user_student_147161
+  📤 Sent to socket: 3jdXS10r9CRvci1QAAAv
+✅ Call 21 accepted by student_147161
+🔄 WebRTC signal for call [object Object] to undefined_undefined
+✅ User connected: student_147161 (kL_tZrUgMKqTb1UcAAA5)
+  📍 Joined room: user_student_147161
+student_147161 joined conversation 3
+student_147161 left conversation 3
+student_147161 joined conversation 3
+❌ User disconnected: student_147162 (DTZhk_8YCf1ZlSM-AAA1)
+❌ User disconnected: student_147162 (2dBmlG0dfoTMjWm-AAA3)
+✅ User connected: student_147162 (v3oXpDVOmw34zJRYAAA7)
+  📍 Joined room: user_student_147162
+student_147162 joined conversation 3
+student_147162 left conversation 3
+student_147162 joined conversation 3
+📊 Active connections: 5, Online users: 2

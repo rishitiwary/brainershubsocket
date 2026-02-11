@@ -70,7 +70,9 @@ io.on('connection', (socket) => {
   onlineUsers.get(socket.userKey).add(socket.id);
   
   // Subscribe to personal notifications/messages
-  socket.join(`user_${socket.userKey}`);
+  const userRoom = `user_${socket.userKey}`;
+  socket.join(userRoom);
+  console.log(`  📍 Joined room: ${userRoom}`);
   
   // Broadcast user online status
   socket.broadcast.emit('user_status_change', {
@@ -223,6 +225,161 @@ io.on('connection', (socket) => {
       ...notification,
       timestamp: Date.now()
     });
+  });
+  
+  // ==================== VOICE/VIDEO CALLS ====================
+  
+  /**
+   * Initiate call
+   */
+  socket.on('initiate_call', (data) => {
+    const { call, to_user_id, to_user_type, initiator_name } = data;
+    const targetUserKey = `${to_user_type}_${to_user_id}`;
+    const targetRoom = `user_${targetUserKey}`;
+    
+    console.log(`📞 Call initiated from ${socket.userKey} to ${targetUserKey}`, {
+      callId: call.id,
+      callType: call.call_type
+    });
+    
+    // Check if target user is in the room
+    const roomSockets = io.sockets.adapter.rooms.get(targetRoom);
+    console.log(`  📍 Target room: ${targetRoom}, Sockets in room: ${roomSockets ? roomSockets.size : 0}`);
+    
+    if (roomSockets && roomSockets.size > 0) {
+      console.log(`  👥 Sockets in ${targetRoom}:`, Array.from(roomSockets));
+    } else {
+      console.log(`  ⚠️  WARNING: No sockets in room ${targetRoom}! User may not be connected.`);
+    }
+    
+    // Send incoming call to target user room
+    io.to(targetRoom).emit('incoming_call', {
+      ...call,
+      initiator_id: socket.userId,
+      initiator_type: socket.userType,
+      initiator_name: initiator_name || 'Unknown',
+      timestamp: Date.now()
+    });
+    
+    console.log(`  ✅ Sent incoming_call to ${targetRoom}`);
+    
+    // ALSO broadcast to all sockets of that user (backup)
+    if (onlineUsers.has(targetUserKey)) {
+      const userSockets = onlineUsers.get(targetUserKey);
+      userSockets.forEach(socketId => {
+        io.to(socketId).emit('incoming_call', {
+          ...call,
+          initiator_id: socket.userId,
+          initiator_type: socket.userType,
+          initiator_name: initiator_name || 'Unknown',
+          timestamp: Date.now()
+        });
+        console.log(`  📤 Sent to socket: ${socketId}`);
+      });
+    }
+  });
+  
+  /**
+   * Accept call
+   */
+  socket.on('accept_call', (data) => {
+    const { call_id, user_id, user_type } = data;
+    
+    console.log(`✅ Call ${call_id} accepted by ${user_type}_${user_id}`);
+    
+    // Notify all participants that call was accepted
+    io.emit('call_accepted', {
+      callId: call_id,
+      id: call_id,
+      acceptedBy: {
+        id: user_id,
+        type: user_type
+      },
+      timestamp: Date.now()
+    });
+  });
+  
+  /**
+   * Reject call
+   */
+  socket.on('reject_call', (data) => {
+    const { call_id, user_id, user_type } = data;
+    
+    console.log(`❌ Call ${call_id} rejected by ${user_type}_${user_id}`);
+    
+    // Notify all participants that call was rejected
+    io.emit('call_rejected', {
+      callId: call_id,
+      id: call_id,
+      rejectedBy: {
+        id: user_id,
+        type: user_type
+      },
+      timestamp: Date.now()
+    });
+  });
+  
+  /**
+   * End call
+   */
+  socket.on('end_call', (data) => {
+    const { call_id, user_id, user_type } = data;
+    
+    console.log(`📴 Call ${call_id} ended by ${user_type}_${user_id}`);
+    
+    // Notify all participants that call ended
+    io.emit('call_ended', {
+      callId: call_id,
+      id: call_id,
+      endedBy: {
+        id: user_id,
+        type: user_type
+      },
+      timestamp: Date.now()
+    });
+  });
+  
+  /**
+   * WebRTC signaling - relay ICE candidates and SDP offers/answers
+   */
+  socket.on('call_signal', (data) => {
+    const { callId, call_id, signal, to_user_id, to_user_type } = data;
+    const actualCallId = callId || call_id;
+    const targetUserKey = `${to_user_type}_${to_user_id}`;
+    
+    console.log(`🔄 WebRTC signal for call ${actualCallId} to ${targetUserKey}`);
+    
+    // Forward signal to target user room
+    io.to(`user_${targetUserKey}`).emit('call_signal', {
+      callId: actualCallId,
+      id: actualCallId,
+      call_id: actualCallId,
+      signal,
+      from: {
+        id: socket.userId,
+        type: socket.userType
+      },
+      timestamp: Date.now()
+    });
+    
+    // Also send directly to user's sockets (backup)
+    if (onlineUsers.has(targetUserKey)) {
+      const userSockets = onlineUsers.get(targetUserKey);
+      userSockets.forEach(socketId => {
+        io.to(socketId).emit('call_signal', {
+          callId: actualCallId,
+          id: actualCallId,
+          call_id: actualCallId,
+          signal,
+          from: {
+            id: socket.userId,
+            type: socket.userType
+          },
+          timestamp: Date.now()
+        });
+      });
+      console.log(`  📤 Sent WebRTC signal to ${userSockets.size} socket(s)`);
+    }
   });
   
   // ==================== DISCONNECT ====================
