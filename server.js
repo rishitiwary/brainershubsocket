@@ -233,50 +233,18 @@ io.on('connection', (socket) => {
    * Initiate call
    */
   socket.on('initiate_call', (data) => {
-    const { call, to_user_id, to_user_type, initiator_name } = data;
+    const { call, to_user_id, to_user_type } = data;
     const targetUserKey = `${to_user_type}_${to_user_id}`;
     const targetRoom = `user_${targetUserKey}`;
     
-    console.log(`📞 Call initiated from ${socket.userKey} to ${targetUserKey}`, {
-      callId: call.id,
-      callType: call.call_type
-    });
-    
-    // Check if target user is in the room
-    const roomSockets = io.sockets.adapter.rooms.get(targetRoom);
-    console.log(`  📍 Target room: ${targetRoom}, Sockets in room: ${roomSockets ? roomSockets.size : 0}`);
-    
-    if (roomSockets && roomSockets.size > 0) {
-      console.log(`  👥 Sockets in ${targetRoom}:`, Array.from(roomSockets));
-    } else {
-      console.log(`  ⚠️  WARNING: No sockets in room ${targetRoom}! User may not be connected.`);
-    }
+    // Pass through ALL enriched call data from ChatWindow
+    const callData = {
+      ...call,
+      timestamp: Date.now()
+    };
     
     // Send incoming call to target user room
-    io.to(targetRoom).emit('incoming_call', {
-      ...call,
-      initiator_id: socket.userId,
-      initiator_type: socket.userType,
-      initiator_name: initiator_name || 'Unknown',
-      timestamp: Date.now()
-    });
-    
-    console.log(`  ✅ Sent incoming_call to ${targetRoom}`);
-    
-    // ALSO broadcast to all sockets of that user (backup)
-    if (onlineUsers.has(targetUserKey)) {
-      const userSockets = onlineUsers.get(targetUserKey);
-      userSockets.forEach(socketId => {
-        io.to(socketId).emit('incoming_call', {
-          ...call,
-          initiator_id: socket.userId,
-          initiator_type: socket.userType,
-          initiator_name: initiator_name || 'Unknown',
-          timestamp: Date.now()
-        });
-        console.log(`  📤 Sent to socket: ${socketId}`);
-      });
-    }
+    io.to(targetRoom).emit('incoming_call', callData);
   });
   
   /**
@@ -284,8 +252,6 @@ io.on('connection', (socket) => {
    */
   socket.on('accept_call', (data) => {
     const { call_id, user_id, user_type } = data;
-    
-    console.log(`✅ Call ${call_id} accepted by ${user_type}_${user_id}`);
     
     // Notify all participants that call was accepted
     io.emit('call_accepted', {
@@ -305,8 +271,6 @@ io.on('connection', (socket) => {
   socket.on('reject_call', (data) => {
     const { call_id, user_id, user_type } = data;
     
-    console.log(`❌ Call ${call_id} rejected by ${user_type}_${user_id}`);
-    
     // Notify all participants that call was rejected
     io.emit('call_rejected', {
       callId: call_id,
@@ -324,8 +288,6 @@ io.on('connection', (socket) => {
    */
   socket.on('end_call', (data) => {
     const { call_id, user_id, user_type } = data;
-    
-    console.log(`📴 Call ${call_id} ended by ${user_type}_${user_id}`);
     
     // Notify all participants that call ended
     io.emit('call_ended', {
@@ -347,10 +309,7 @@ io.on('connection', (socket) => {
     const actualCallId = callId || call_id;
     const targetUserKey = `${to_user_type}_${to_user_id}`;
     
-    console.log(`🔄 WebRTC signal for call ${actualCallId} to ${targetUserKey}`);
-    
-    // Forward signal to target user room
-    io.to(`user_${targetUserKey}`).emit('call_signal', {
+    const signalData = {
       callId: actualCallId,
       id: actualCallId,
       call_id: actualCallId,
@@ -360,32 +319,17 @@ io.on('connection', (socket) => {
         type: socket.userType
       },
       timestamp: Date.now()
-    });
+    };
     
-    // Also send directly to user's sockets (backup)
-    if (onlineUsers.has(targetUserKey)) {
-      const userSockets = onlineUsers.get(targetUserKey);
-      userSockets.forEach(socketId => {
-        io.to(socketId).emit('call_signal', {
-          callId: actualCallId,
-          id: actualCallId,
-          call_id: actualCallId,
-          signal,
-          from: {
-            id: socket.userId,
-            type: socket.userType
-          },
-          timestamp: Date.now()
-        });
-      });
-      console.log(`  📤 Sent WebRTC signal to ${userSockets.size} socket(s)`);
-    }
+    // Send to target user's room
+    const roomName = `user_${targetUserKey}`;
+    io.to(roomName).emit('call_signal', signalData);
   });
   
   // ==================== DISCONNECT ====================
   
   socket.on('disconnect', () => {
-    console.log(`❌ User disconnected: ${socket.userKey} (${socket.id})`);
+  
     
     // Remove socket from user's socket list
     if (onlineUsers.has(socket.userKey)) {
@@ -420,20 +364,14 @@ io.on('connection', (socket) => {
 // Start server
 const PORT = config.port;
 server.listen(PORT, () => {
-  console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-  console.log(`🚀 Brainers Hub Socket.io Server`);
-  console.log(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
-  console.log(`✅ Server running on port ${PORT}`);
-  console.log(`✅ Environment: ${config.nodeEnv}`);
-  console.log(`✅ CORS Origin: ${config.corsOrigin}`);
-  console.log(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
+
   console.log(`📊 Health check: http://localhost:${PORT}/health`);
   console.log(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
 });
 
 // Graceful shutdown
 process.on('SIGTERM', () => {
-  console.log('⚠️  SIGTERM received, closing server...');
+ 
   server.close(() => {
     console.log('✅ Server closed');
     process.exit(0);
