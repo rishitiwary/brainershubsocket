@@ -1,9 +1,17 @@
+// Load environment variables
+require('dotenv').config();
+
 // Socket.io Server Configuration
 module.exports = {
   port: process.env.PORT || 3001,
-  corsOrigin: ['https://brainershub.in', 'https://www.brainershub.in', 'http://localhost:3000','http://localhost:3002'],
-  laravelApiUrl: 'https://admin.brainershub.in/api',
+  corsOrigin: process.env.CORS_ORIGINS 
+    ? process.env.CORS_ORIGINS.split(',')
+    : ['https://brainershub.in', 'https://www.brainershub.in', 'http://localhost:3000','http://localhost:3002'],
+  laravelApiUrl: process.env.LARAVEL_API_URL || 'https://admin.brainershub.in/api',
   nodeEnv: process.env.NODE_ENV || 'development',
+  
+  // JWT Secret for token verification (must match Laravel APP_KEY)
+  jwtSecret: process.env.JWT_SECRET,
   
   // Socket.io options
   pingTimeout: 60000,

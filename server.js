@@ -2,6 +2,7 @@ const express = require('express');
 const http = require('http');
 const socketIO = require('socket.io');
 const cors = require('cors');
+const jwt = require('jsonwebtoken');
 const config = require('./config');
 
 const app = express();
@@ -42,21 +43,52 @@ const io = socketIO(server, {
 // Store for online users
 const onlineUsers = new Map(); // userKey -> Set of socket IDs
 
-// Authentication middleware
+// JWT Authentication middleware
 io.use((socket, next) => {
-  const userId = socket.handshake.auth.userId;
-  const userType = socket.handshake.auth.userType;
-  
-  if (!userId || !userType) {
-    return next(new Error('Authentication required'));
+  try {
+    // Get token from Authorization header
+    const authHeader = socket.handshake.headers.authorization;
+    
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      console.log('❌ No authorization header found');
+      return next(new Error('Authentication token required'));
+    }
+    
+    const token = authHeader.replace('Bearer ', '');
+    
+    // Verify JWT token
+    if (!config.jwtSecret) {
+      console.error('❌ JWT_SECRET not configured');
+      return next(new Error('Server configuration error'));
+    }
+    
+    // Decode and verify token
+    const decoded = jwt.verify(token, config.jwtSecret);
+    
+    // Extract user info from token payload
+    // Laravel tokens typically have: id, email, role, etc.
+    socket.userId = decoded.id || decoded.user_id || decoded.sub;
+    socket.email = decoded.email;
+    
+    // Determine user type from role (role: 3 = teacher, otherwise student)
+    socket.userType = (decoded.role === 3 || decoded.role === '3') ? 'teacher' : 'student';
+    socket.userKey = `${socket.userType}_${socket.userId}`;
+    
+    console.log(`✅ JWT Authenticated: ${socket.userKey} (${socket.email})`);
+    next();
+    
+  } catch (error) {
+    console.error('❌ JWT Authentication failed:', error.message);
+    
+    if (error.name === 'JsonWebTokenError') {
+      return next(new Error('Invalid authentication token'));
+    }
+    if (error.name === 'TokenExpiredError') {
+      return next(new Error('Authentication token expired'));
+    }
+    
+    return next(new Error('Authentication failed'));
   }
-  
-  // Store user info on socket
-  socket.userId = userId;
-  socket.userType = userType;
-  socket.userKey = `${userType}_${userId}`;
-  
-  next();
 });
 
 // Connection handler
