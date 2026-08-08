@@ -2,7 +2,8 @@ const express = require('express');
 const http = require('http');
 const socketIO = require('socket.io');
 const cors = require('cors');
-const jwt = require('jsonwebtoken');
+const mysql = require('mysql2/promise');
+const crypto = require('crypto');
 const config = require('./config');
 
 const app = express();
@@ -10,6 +11,9 @@ const server = http.createServer(app);
 
 app.use(cors());
 app.use(express.json());
+
+// Create database connection pool for Sanctum token validation
+const dbPool = mysql.createPool(config.database);
 
 // Health check endpoint
 app.get('/health', (req, res) => {
@@ -32,61 +36,93 @@ app.get('/', (req, res) => {
 const io = socketIO(server, {
   cors: {
     origin: config.corsOrigin,
-    methods: ["GET", "POST"],
-    credentials: true
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    credentials: true,
+    allowedHeaders: ["*"]
   },
+  transports: ['polling', 'websocket'], // Start with polling, then upgrade
+  allowUpgrades: true,
   pingTimeout: config.pingTimeout,
   pingInterval: config.pingInterval,
-  maxHttpBufferSize: config.maxHttpBufferSize
+  maxHttpBufferSize: config.maxHttpBufferSize,
+  allowEIO3: true // Support older clients
 });
 
 // Store for online users
 const onlineUsers = new Map(); // userKey -> Set of socket IDs
 
-// JWT Authentication middleware
-io.use((socket, next) => {
+// Sanctum Authentication middleware
+io.use(async (socket, next) => {
   try {
-    // Get token from Authorization header
-    const authHeader = socket.handshake.headers.authorization;
+    // Get token from auth object (works with WebSocket!)
+    const bearerToken = socket.handshake.auth.token;
     
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      console.log('❌ No authorization header found');
+    if (!bearerToken) {
+      console.log('❌ No authentication token found');
       return next(new Error('Authentication token required'));
     }
     
-    const token = authHeader.replace('Bearer ', '');
+    // Parse Sanctum token format: userId|plainToken
+    const tokenParts = bearerToken.split('|');
     
-    // Verify JWT token
-    if (!config.jwtSecret) {
-      console.error('❌ JWT_SECRET not configured');
-      return next(new Error('Server configuration error'));
+    if (tokenParts.length !== 2) {
+      console.log('❌ Invalid token format');
+      return next(new Error('Invalid token format'));
     }
     
-    // Decode and verify token
-    const decoded = jwt.verify(token, config.jwtSecret);
+    const userId = parseInt(tokenParts[0]);
+    const plainToken = tokenParts[1];
     
-    // Extract user info from token payload
-    // Laravel tokens typically have: id, email, role, etc.
-    socket.userId = decoded.id || decoded.user_id || decoded.sub;
-    socket.email = decoded.email;
+    // Hash the plain token to match database
+    const hashedToken = crypto.createHash('sha256').update(plainToken).digest('hex');
+    
+    // Query database to validate token
+    const [rows] = await dbPool.execute(
+      `SELECT pat.*, s.id, s.firstname, s.lastname, s.email, s.role 
+       FROM personal_access_tokens pat
+       LEFT JOIN students s ON pat.tokenable_id = s.id AND pat.tokenable_type = 'App\\\\Models\\\\Student'
+       WHERE pat.tokenable_id = ? AND pat.token = ?
+       LIMIT 1`,
+      [userId, hashedToken]
+    );
+    
+    if (rows.length === 0) {
+      console.log('❌ Invalid token - not found in database');
+      return next(new Error('Invalid authentication token'));
+    }
+    
+    const tokenRecord = rows[0];
+    
+    // Check if token is expired
+    if (tokenRecord.expires_at) {
+      const expiresAt = new Date(tokenRecord.expires_at);
+      if (new Date() > expiresAt) {
+        console.log('❌ Token expired');
+        return next(new Error('Authentication token expired'));
+      }
+    }
+    
+    // Extract user info
+    socket.userId = tokenRecord.id;
+    socket.email = tokenRecord.email;
+    socket.name = `${tokenRecord.firstname || ''} ${tokenRecord.lastname || ''}`.trim();
     
     // Determine user type from role (role: 3 = teacher, otherwise student)
-    socket.userType = (decoded.role === 3 || decoded.role === '3') ? 'teacher' : 'student';
+    socket.userType = (tokenRecord.role === 3 || tokenRecord.role === '3') ? 'teacher' : 'student';
     socket.userKey = `${socket.userType}_${socket.userId}`;
     
-    console.log(`✅ JWT Authenticated: ${socket.userKey} (${socket.email})`);
+    console.log(`✅ Sanctum Authenticated: ${socket.userKey} (${socket.name || socket.email})`);
+    
+    // Update last_used_at for the token
+    await dbPool.execute(
+      'UPDATE personal_access_tokens SET last_used_at = NOW() WHERE id = ?',
+      [tokenRecord.id]
+    );
+    
     next();
     
   } catch (error) {
-    console.error('❌ JWT Authentication failed:', error.message);
-    
-    if (error.name === 'JsonWebTokenError') {
-      return next(new Error('Invalid authentication token'));
-    }
-    if (error.name === 'TokenExpiredError') {
-      return next(new Error('Authentication token expired'));
-    }
-    
+    console.error('❌ Sanctum Authentication failed:', error.message);
     return next(new Error('Authentication failed'));
   }
 });

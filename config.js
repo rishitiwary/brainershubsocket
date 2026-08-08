@@ -10,8 +10,17 @@ module.exports = {
   laravelApiUrl: process.env.LARAVEL_API_URL || 'https://admin.brainershub.in/api',
   nodeEnv: process.env.NODE_ENV || 'development',
   
-  // JWT Secret for token verification (must match Laravel APP_KEY)
-  jwtSecret: process.env.JWT_SECRET,
+  // Database configuration for Sanctum token validation
+  database: {
+    host: process.env.DB_HOST || '127.0.0.1',
+    port: process.env.DB_PORT || 3306,
+    user: process.env.DB_USERNAME || 'root',
+    password: process.env.DB_PASSWORD || '',
+    database: process.env.DB_DATABASE || 'brainerhub',
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0
+  },
   
   // Socket.io options
   pingTimeout: 60000,
