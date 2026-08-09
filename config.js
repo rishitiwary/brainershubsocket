@@ -12,11 +12,11 @@ module.exports = {
   
   // Database configuration for Sanctum token validation
   database: {
-    host: process.env.DB_HOST || '127.0.0.1',
-    port: process.env.DB_PORT || 3306,
-    user: process.env.DB_USERNAME || 'root',
-    password: process.env.DB_PASSWORD !== undefined ? process.env.DB_PASSWORD : '',
-    database: process.env.DB_DATABASE || 'brainerhub',
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT,
+    user: process.env.DB_USERNAME ,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_DATABASE,
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0
