@@ -32,6 +32,48 @@ app.get('/', (req, res) => {
   });
 });
 
+// Database health check endpoint
+app.get('/db-health', async (req, res) => {
+  try {
+    // Test database connection
+    const [rows] = await dbPool.execute('SELECT 1 as test');
+    
+    // Get database info
+    const [dbInfo] = await dbPool.execute('SELECT DATABASE() as db_name, USER() as db_user');
+    
+    res.json({
+      status: 'ok',
+      message: 'Database connection successful',
+      database: {
+        name: dbInfo[0].db_name,
+        user: dbInfo[0].db_user,
+        host: config.database.host,
+        port: config.database.port
+      },
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: 'error',
+      message: 'Database connection failed',
+      error: {
+        message: error.message,
+        code: error.code,
+        errno: error.errno,
+        sqlMessage: error.sqlMessage
+      },
+      config: {
+        host: config.database.host,
+        port: config.database.port,
+        database: config.database.database,
+        user: config.database.user,
+        passwordSet: !!config.database.password
+      },
+      timestamp: new Date().toISOString()
+    });
+  }
+});
+
 // Socket.io setup
 const io = socketIO(server, {
   cors: {
